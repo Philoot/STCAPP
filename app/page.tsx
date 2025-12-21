@@ -24,8 +24,7 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h2 className="text-5xl font-bold mb-6 text-balance">Solar STC Credits Management for Australian Tradies</h2>
           <p className="text-xl text-muted-foreground mb-8 text-pretty">
-            Streamline your solar panel installations, capture panel data on-site, and let us handle the compliance
-            paperwork for the Clean Energy Regulator
+            same day payment for STC assignements to 123STC for compliant applications
           </p>
           <div className="flex gap-4 justify-center">
             <Button size="lg" asChild>
