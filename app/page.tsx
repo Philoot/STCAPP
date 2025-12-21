@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle, FileText, Camera, Award } from "lucide-react"
+import { CheckCircle, FileText, Camera, DollarSign } from "lucide-react"
 
 export default function HomePage() {
   return (
@@ -14,7 +14,7 @@ export default function HomePage() {
               <Link href="/auth/login">Login</Link>
             </Button>
             <Button asChild>
-              <Link href="/auth/sign-up">Sign Up</Link>
+              <Link href="/auth/sign-up">Get Started</Link>
             </Button>
           </div>
         </nav>
@@ -22,16 +22,16 @@ export default function HomePage() {
 
       <main className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto text-center mb-16">
-          <h2 className="text-5xl font-bold mb-6 text-balance">Solar STC Credits Management for Australian Tradies</h2>
+          <h2 className="text-5xl font-bold mb-6 text-balance">Payment to Solar Installers for STC Applications</h2>
           <p className="text-xl text-muted-foreground mb-8 text-pretty">
-            same day payment for STC assignements to 123STC for compliant applications
+            Real Time Payment for Compliant STC Assignments
           </p>
           <div className="flex gap-4 justify-center">
             <Button size="lg" asChild>
               <Link href="/auth/sign-up">Get Started</Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/auth/login">Tradie Login</Link>
+              <Link href="/auth/login">Login</Link>
             </Button>
           </div>
         </div>
@@ -63,24 +63,24 @@ export default function HomePage() {
 
           <Card>
             <CardHeader>
-              <CheckCircle className="h-10 w-10 mb-2 text-primary" />
-              <CardTitle>We Handle Compliance</CardTitle>
+              <DollarSign className="h-10 w-10 mb-2 text-primary" />
+              <CardTitle>Instant Payment</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Our team completes all paperwork and submissions to the Clean Energy Regulator on your behalf
+                Receive real-time payment for compliant STC assignments as soon as rights are assigned
               </CardDescription>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <Award className="h-10 w-10 mb-2 text-primary" />
-              <CardTitle>Claim Credits</CardTitle>
+              <CheckCircle className="h-10 w-10 mb-2 text-primary" />
+              <CardTitle>We Handle Compliance</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Track your installations from capture to approved credits with full transparency and reporting
+                Our team completes all paperwork and submissions to the Clean Energy Regulator on your behalf
               </CardDescription>
             </CardContent>
           </Card>
