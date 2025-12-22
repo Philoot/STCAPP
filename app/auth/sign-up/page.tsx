@@ -37,8 +37,6 @@ export default function SignUpPage() {
     try {
       const redirectUrl = process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/auth/callback`
 
-      console.log("[v0] Attempting signup with redirect:", redirectUrl)
-
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -51,20 +49,14 @@ export default function SignUpPage() {
         },
       })
 
-      console.log("[v0] Signup response:", { data, error })
-
       if (error) throw error
 
-      // Check if email confirmation is required
-      if (data?.user && !data.user.confirmed_at) {
-        console.log("[v0] User created but needs email confirmation")
+      if (data.session) {
+        router.push("/onboarding")
       } else {
-        console.log("[v0] User created and auto-confirmed")
+        router.push("/auth/sign-up-success")
       }
-
-      router.push("/auth/sign-up-success")
     } catch (error: unknown) {
-      console.error("[v0] Signup error:", error)
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
       setIsLoading(false)
