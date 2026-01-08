@@ -2,6 +2,14 @@ export type UserRole = "tradie" | "admin"
 
 export type InstallationStatus = "draft" | "submitted" | "under_review" | "approved" | "rejected" | "credits_claimed"
 
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json }
+  | Json[]
+
 export interface Profile {
   id: string
   email: string
@@ -213,4 +221,21 @@ export interface AuditLog {
   details: Record<string, any> | null
   performed_by: string | null
   performed_at: string
+}
+
+export interface InstallationDetails {
+  installation_id: string
+  installer: Json | null
+  installation: Json | null
+  pv: Json | null
+  inverter: Json | null
+  battery: Json | null
+  owner: Json | null
+  electrician: Json | null
+  designer: Json | null
+  retailer: Json | null
+  accreditation: Json | null
+  attachments: Json | null
+  created_at: string
+  updated_at: string
 }

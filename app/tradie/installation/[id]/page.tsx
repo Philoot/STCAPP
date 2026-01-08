@@ -35,6 +35,12 @@ export default async function InstallationDetailPage({ params }: { params: Promi
     .eq("installation_id", id)
     .order("created_at", { ascending: false })
 
+  const { data: details } = await supabase
+    .from("installation_details")
+    .select("*")
+    .eq("installation_id", id)
+    .single()
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "draft":
@@ -56,6 +62,58 @@ export default async function InstallationDetailPage({ params }: { params: Promi
 
   const canEdit = installation.status === "draft"
   const progress = installation.total_panels > 0 ? ((panels?.length || 0) / installation.total_panels) * 100 : 0
+
+  const formatValue = (value: unknown) => {
+    if (value === null || value === undefined || value === "") return "—"
+    if (Array.isArray(value)) return value.filter(Boolean).join(", ")
+    if (typeof value === "object") return JSON.stringify(value)
+    return String(value)
+  }
+
+  const renderRows = (record?: Record<string, unknown>) => {
+    if (!record) return null
+    return Object.entries(record).map(([key, value]) => (
+      <div key={key} className="flex justify-between">
+        <dt className="text-muted-foreground">{key.replace(/_/g, " ")}</dt>
+        <dd className="font-medium text-right">{formatValue(value)}</dd>
+      </div>
+    ))
+  }
+
+  const renderLinkList = (value: unknown) => {
+    if (!value) return <span className="text-muted-foreground">—</span>
+    if (Array.isArray(value)) {
+      return (
+        <div className="flex flex-col gap-1 text-right">
+          {value.map((entry, index) =>
+            typeof entry === "string" ? (
+              <a
+                key={`${entry}-${index}`}
+                href={entry}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-primary hover:underline"
+              >
+                {entry}
+              </a>
+            ) : (
+              <span key={`${index}`} className="text-muted-foreground">
+                —
+              </span>
+            ),
+          )}
+        </div>
+      )
+    }
+    if (typeof value === "string") {
+      return (
+        <a href={value} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
+          {value}
+        </a>
+      )
+    }
+    return <span className="text-muted-foreground">—</span>
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -124,6 +182,98 @@ export default async function InstallationDetailPage({ params }: { params: Promi
               )}
             </CardContent>
           </Card>
+
+          {details && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Installation Submission Details</CardTitle>
+                <CardDescription>Installer, owner, equipment, and compliance metadata</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div>
+                    <h3 className="font-semibold mb-2">Installer</h3>
+                    <dl className="space-y-2 text-sm">{renderRows(details.installer as Record<string, unknown>)}</dl>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2">Installation</h3>
+                    <dl className="space-y-2 text-sm">{renderRows(details.installation as Record<string, unknown>)}</dl>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2">PV Modules</h3>
+                    <dl className="space-y-2 text-sm">{renderRows(details.pv as Record<string, unknown>)}</dl>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2">Inverters</h3>
+                    <dl className="space-y-2 text-sm">{renderRows(details.inverter as Record<string, unknown>)}</dl>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2">Battery</h3>
+                    <dl className="space-y-2 text-sm">{renderRows(details.battery as Record<string, unknown>)}</dl>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2">Owner</h3>
+                    <dl className="space-y-2 text-sm">{renderRows(details.owner as Record<string, unknown>)}</dl>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2">Electrician</h3>
+                    <dl className="space-y-2 text-sm">{renderRows(details.electrician as Record<string, unknown>)}</dl>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2">Designer</h3>
+                    <dl className="space-y-2 text-sm">{renderRows(details.designer as Record<string, unknown>)}</dl>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2">Retailer</h3>
+                    <dl className="space-y-2 text-sm">{renderRows(details.retailer as Record<string, unknown>)}</dl>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2">Accreditation</h3>
+                    <dl className="space-y-2 text-sm">{renderRows(details.accreditation as Record<string, unknown>)}</dl>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Attachments</h3>
+                  <dl className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground">Certificate of Electrical Safety</dt>
+                      <dd className="font-medium text-right">
+                        {renderLinkList((details.attachments as Record<string, unknown>)?.certificate_of_electrical_safety_url)}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground">Proof of Attendance</dt>
+                      <dd className="font-medium text-right">
+                        {renderLinkList((details.attachments as Record<string, unknown>)?.proof_of_attendance_url)}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground">PV Serial Photos</dt>
+                      <dd className="font-medium text-right">
+                        {renderLinkList(
+                          (details.attachments as Record<string, unknown>)?.pv_serial_number_photo_urls,
+                        )}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground">Inverter Serial Photos</dt>
+                      <dd className="font-medium text-right">
+                        {renderLinkList(
+                          (details.attachments as Record<string, unknown>)?.inverter_serial_number_photo_urls,
+                        )}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground">Retailer Proof</dt>
+                      <dd className="font-medium text-right">
+                        {renderLinkList((details.attachments as Record<string, unknown>)?.retailer_proof_of_no_use_url)}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           <Card>
             <CardHeader>
